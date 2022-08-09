@@ -211,7 +211,7 @@ public class DrainTileEntity extends TileEntityIEBase implements ITickable, IEBl
 
     private boolean isWater(Block block) {
         for (String registryName : Config.pollutableBlocks) {
-            return block == ForgeRegistries.BLOCKS.getValue(new ResourceLocation(registryName));
+            if(block == ForgeRegistries.BLOCKS.getValue(new ResourceLocation(registryName))) return true;
         }
         return false;
     }

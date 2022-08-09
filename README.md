@@ -6,3 +6,8 @@ The mod itself only adds one block which is visually similar to the Fluid Outlet
 
 
 ## Recipe
+[<img alt="alt_text" width="300px" src="gallery/recipe.png" />]()
+## Example
+[<img alt="alt_text" width="300px" src="gallery/example.png" />]()
+## Config
+By default: a water block is polluted per 2000 mb of liquid, the drain has infinite range, the drain updates every 20 ticks. If you which to change those or more, I heavily advise to look into "config/unecologicalmethods.cfg".
