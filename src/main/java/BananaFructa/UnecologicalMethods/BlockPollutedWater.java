@@ -4,12 +4,14 @@ import net.dries007.tfc.objects.blocks.BlocksTFC;
 import net.dries007.tfc.objects.blocks.stone.BlockFarmlandTFC;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFarmland;
+import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.projectile.EntityFishHook;
 import net.minecraft.init.Blocks;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
@@ -106,6 +108,9 @@ public class BlockPollutedWater extends BlockFluidClassic {
 
     @Override
     public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
+        if (entityIn instanceof EntityFishHook) {
+            entityIn.setDead();
+        }
         if (entityIn instanceof EntityLivingBase) {
             EntityLivingBase base = (EntityLivingBase) entityIn;
             boolean poison = false,nausea = false,hunger = false;
@@ -123,5 +128,10 @@ public class BlockPollutedWater extends BlockFluidClassic {
                 base.addPotionEffect(new PotionEffect(Potion.REGISTRY.getObjectById(17), 20 * 20, 2));
             }
         }
+    }
+
+    @Override
+    public EnumPushReaction getMobilityFlag(IBlockState state) {
+        return EnumPushReaction.BLOCK;
     }
 }

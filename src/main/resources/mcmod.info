@@ -3,7 +3,7 @@
   "modid": "uem",
   "name": "Unecological Methods",
   "description": "Allows the draining of chemicals into the waterways.",
-  "version": "0.1",
+  "version": "0.2",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
