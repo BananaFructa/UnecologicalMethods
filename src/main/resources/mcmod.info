@@ -1,0 +1,16 @@
+[
+{
+  "modid": "uem",
+  "name": "Unecological Methods",
+  "description": "Allows the draining of chemicals into the waterways.",
+  "version": "0.1",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["BananaFructa"],
+  "credits": "Reality",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
