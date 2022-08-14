@@ -18,6 +18,8 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
 
 @Mod.EventBusSubscriber
@@ -63,6 +65,7 @@ public class UEMContent {
         event.getRegistry().register(drain);
     }
 
+    @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public static void onModelRegistry(ModelRegistryEvent event) {
         ModelLoader.setCustomModelResourceLocation(itemBlockPolluted, 0, new ModelResourceLocation(itemBlockPolluted.getRegistryName(),"fluid"));
