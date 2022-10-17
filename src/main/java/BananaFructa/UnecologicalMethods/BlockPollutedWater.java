@@ -123,9 +123,13 @@ public class BlockPollutedWater extends BlockFluidClassic {
                 if (id == 17 && duration >= 18 * 20) hunger = true;
             }
             if (!(poison || nausea || hunger)) {
-                base.addPotionEffect(new PotionEffect(Potion.REGISTRY.getObjectById(19), 10 * 20, 1));
-                base.addPotionEffect(new PotionEffect(Potion.REGISTRY.getObjectById(9), 60 * 20, 3));
-                base.addPotionEffect(new PotionEffect(Potion.REGISTRY.getObjectById(17), 20 * 20, 2));
+                for (Effect effect : Config.effectList) {
+                    try {
+                        base.addPotionEffect(new PotionEffect(Potion.getPotionFromResourceLocation(effect.location), effect.duration, effect.amplification));
+                    } catch (Exception err) {
+                        err.printStackTrace();
+                    }
+                }
             }
         }
     }
