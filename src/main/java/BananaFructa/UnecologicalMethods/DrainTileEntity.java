@@ -32,7 +32,7 @@ public class DrainTileEntity extends TileEntityIEBase implements ITickable, IEBl
 
     protected final Random random = new Random();
 
-    HashSet<Long> positions = new HashSet<>();
+    protected HashSet<Long> positions = new HashSet<>();
 
     protected static long ft = 0;
 

@@ -64,7 +64,7 @@ public class DrainTank extends FluidTank {
         }
     }
 
-    void dump(int maxDrain) {
+    public void dump(int maxDrain) {
         if (maxDrain <= universalCapacity) {
             universalCapacity -= maxDrain;
         } else {
