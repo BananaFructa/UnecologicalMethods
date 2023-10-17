@@ -27,14 +27,14 @@ import java.util.*;
 
 public class DrainTileEntity extends TileEntityIEBase implements ITickable, IEBlockInterfaces.IConfigurableSides, IEBlockInterfaces.IBlockOverlayText {
 
-    public FluidTank tank = new FluidTank(Config.mbPerBlock + 2000);
-    private int tickCount = 0;
+    public DrainTank tank = new DrainTank(Config.mbPerBlock + 2000);
+    protected int tickCount = 0;
 
-    private final Random random = new Random();
+    protected final Random random = new Random();
 
     HashSet<Long> positions = new HashSet<>();
 
-    private static long ft = 0;
+    protected static long ft = 0;
 
     static {
         for (int i = 7*4 - 1;i >= 0;i--) {
@@ -48,24 +48,21 @@ public class DrainTileEntity extends TileEntityIEBase implements ITickable, IEBl
 
     }
 
-    private final BlockPos[] dir = {
+    protected final BlockPos[] dir = {
         new BlockPos(1,0,0),
         new BlockPos(-1,0,0),
         new BlockPos(0,0,1),
         new BlockPos(0,0,-1)
     };
 
-    final int RIGHT = 0;
-    final int LEFT = 1;
-    final int UP = 2;
-    final int DOWN = 3;
+    protected final int RIGHT = 0;
+    protected final int LEFT = 1;
+    protected final int UP = 2;
+    protected final int DOWN = 3;
 
-    int y = -1;
+    protected int y = -1;
 
-    private static HashMap<String,Boolean> bannedCache = new HashMap<>();
-    private static HashMap<String,Boolean> pollutantCache = new HashMap<>();
-
-    private boolean tooManyIterations = false;
+    protected boolean tooManyIterations = false;
 
 
     @Override
@@ -74,30 +71,6 @@ public class DrainTileEntity extends TileEntityIEBase implements ITickable, IEBl
         tickCount++;
 
         if (tickCount % (Config.tickFrequency * (tooManyIterations ? 5 : 1)) != 0) return;
-        if (tank.getFluid() == null) return;
-
-        String rn = tank.getFluid().getFluid().getBlock().getRegistryName().toString();
-        if (bannedCache.containsKey(rn)) if (bannedCache.get(rn)) return;
-        else {
-            for (String s : Config.bannedLiquids) {
-                if (s.equals(rn)) {
-                    bannedCache.put(rn,true);
-                    return;
-                }
-            }
-            bannedCache.put(rn,false);
-        }
-
-        boolean pollutant = true;
-        if (pollutantCache.containsKey(rn)) pollutant = pollutantCache.get(rn);
-        else {
-            for (String s : Config.nonPollutants) {
-                if (s.equals(rn)) {
-                    pollutant = false;
-                }
-            }
-            pollutantCache.put(rn,pollutant);
-        }
 
         if (getWorld().isRemote || getWorld().isBlockIndirectlyGettingPowered(getPos()) != 0 || tank.getFluidAmount() < Config.mbPerBlock) return;
 
@@ -116,9 +89,8 @@ public class DrainTileEntity extends TileEntityIEBase implements ITickable, IEBl
             BlockPos pos = checkForValid();
 
             if (pos != null) {
-                if (pollutant) polluteBlock(pos);
-                if (tank.getFluid().getFluid() == UEMContent.pollutedWater) tank.drain(1000,true);
-                else tank.drain(Config.mbPerBlock,true);
+                polluteBlock(pos);
+                tank.dump(Config.mbPerBlock);
                 break;
             }
 
@@ -136,11 +108,11 @@ public class DrainTileEntity extends TileEntityIEBase implements ITickable, IEBl
         positions.clear();
     }
 
-    private void polluteBlock(BlockPos pos) {
+    protected void polluteBlock(BlockPos pos) {
         getWorld().setBlockState(pos, UEMContent.blockPollutedWater.getDefaultState());
     }
 
-    private BlockPos checkForValid() {
+    protected BlockPos checkForValid() {
 
         for (Long l : positions) {
             BlockPos pos = getBlockPos(l);
@@ -163,11 +135,11 @@ public class DrainTileEntity extends TileEntityIEBase implements ITickable, IEBl
         return null;
     }
 
-    private boolean runProbability(float chance) {
+    protected boolean runProbability(float chance) {
         return 100 * chance >= random.nextInt(100) + 1;
     }
 
-    private boolean advanceSearch() {
+    protected boolean advanceSearch() {
 
         HashSet<Long> toAdd = new HashSet<>();
 
@@ -195,34 +167,34 @@ public class DrainTileEntity extends TileEntityIEBase implements ITickable, IEBl
         return !positions.isEmpty();
     }
 
-    private BlockPos getBlockPos(long l) {
+    protected BlockPos getBlockPos(long l) {
         Tuple<Integer,Integer> t = getPosition(l);
         return new BlockPos(t.getFirst(),y,t.getSecond());
     }
 
-    private long convertBlockPos(BlockPos blockPos) {
+    protected long convertBlockPos(BlockPos blockPos) {
         return convertPosition(blockPos.getX(),blockPos.getZ());
     }
 
-    private boolean isWater(BlockPos pos) {
+    protected boolean isWater(BlockPos pos) {
         Block block = getWorld().getBlockState(pos).getBlock();
         return isWater(block);
     }
 
-    private boolean isWater(Block block) {
+    protected boolean isWater(Block block) {
         for (String registryName : Config.pollutableBlocks) {
             if(block.getRegistryName().toString().equals(registryName)) return true;
         }
         return false;
     }
 
-    private boolean isValid(BlockPos pos) {
+    protected boolean isValid(BlockPos pos) {
         if (!world.getWorldBorder().contains(pos)) return false;
         Block block = getWorld().getBlockState(pos).getBlock();
         return (isWater(pos) || block == UEMContent.blockPollutedWater) && !isWater(pos.add(new Vec3i(0,1,0)));
     }
 
-    private long convertPosition(int x,int z) {
+    protected long convertPosition(int x,int z) {
         long v = 0;
         v |= x + 30000000;
         v <<= 7 * 4;
@@ -230,7 +202,7 @@ public class DrainTileEntity extends TileEntityIEBase implements ITickable, IEBl
         return v;
     }
 
-    private Tuple<Integer,Integer> getPosition(long v) {
+    protected Tuple<Integer,Integer> getPosition(long v) {
         int z = (int)(v & ft) - 30000000;
         v >>= 7*4;
         int x = (int)(v & ft) - 30000000;
@@ -247,7 +219,7 @@ public class DrainTileEntity extends TileEntityIEBase implements ITickable, IEBl
         sideConfig = nbt.getIntArray("sideConfig");
         if(sideConfig==null || sideConfig.length!=6)
             sideConfig = new int[]{1,0,1,1,1,1};
-        tank.readFromNBT(nbt.getCompoundTag("tank"));
+        tank.setFluidAmount(nbt.getInteger("tankUniversal"));
         if(descPacket)
             this.markContainingBlockForUpdate(null);
     }
@@ -256,7 +228,7 @@ public class DrainTileEntity extends TileEntityIEBase implements ITickable, IEBl
     public void writeCustomNBT(NBTTagCompound nbt, boolean descPacket)
     {
         nbt.setIntArray("sideConfig", sideConfig);
-        nbt.setTag("tank", tank.writeToNBT(new NBTTagCompound()));
+        nbt.setInteger("tankUniversal",tank.getFluidAmount());
     }
 
     @Override
