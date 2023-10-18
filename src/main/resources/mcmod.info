@@ -3,7 +3,7 @@
   "modid": "uem",
   "name": "Unecological Methods",
   "description": "Allows the draining of chemicals into the waterways.",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "mcversion": "${mcversion}",
   "url": "https://www.curseforge.com/minecraft/mc-mods/unecological-methods",
   "updateUrl": "",
